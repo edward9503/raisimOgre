@@ -58,6 +58,26 @@ void CameraMan::setYawPitchDist(Ogre::Radian yaw, Ogre::Radian pitch, Ogre::Real
   mCamera->translate(Ogre::Vector3(0, 0, dist_), Ogre::Node::TS_LOCAL);
 }
 
+void CameraMan::setRollPitchYawPos(Ogre::Real w, Ogre::Real x, Ogre::Real y, Ogre::Real z, Ogre::Vector3 pos, bool trackObjectsYaw)
+{
+  OgreAssert(mTarget, "no target set");
+  // roll_ = roll;
+  // yaw_ = yaw;
+  // pitch_ = pitch;
+  dist_ = 3;
+  // mTarget->setPosition(pos);
+
+  mOffset = Ogre::Vector3::ZERO;
+  mCamera->setPosition(pos);
+  // mCamera->setPosition(mTarget->_getDerivedPosition());
+  mCamera->setOrientation(Ogre::Quaternion{w,x,y,z});
+  if(trackObjectsYaw)
+    mCamera->yaw(mTarget->_getDerivedOrientation().getRoll());
+  mCamera->yaw(-yaw_);
+  mCamera->pitch(-pitch_);
+  mCamera->translate(Ogre::Vector3(0, 0, 0), Ogre::Node::TS_LOCAL);
+}
+
 void CameraMan::setStyle(CameraStyle style)
 {
   if (mStyle != CS_ORBIT && style == CS_ORBIT)
@@ -163,6 +183,11 @@ void CameraMan::frameRendered(const Ogre::FrameEvent &evt)
       Sets the spatial offset from the target. Only applies for orbit style.
       */
       void setYawPitchDist(Ogre::Radian yaw, Ogre::Radian pitch, Ogre::Real dist, bool trackObjectsYaw);
+
+      /**
+      Sets the spatial offset from the target. Only applies for orbit style. 
+      */
+      void setRollPitchYawPos(Ogre::Real w, Ogre::Real x, Ogre::Real y, Ogre::Real z, Ogre::Vector3 pos, bool trackObjectsYaw);
 
       /**
       Sets the camera's top speed. Only applies for free-look style.

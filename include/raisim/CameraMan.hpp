@@ -62,6 +62,11 @@ class CameraMan : public InputListener
   void setYawPitchDist(Ogre::Radian yaw, Ogre::Radian pitch, Ogre::Real dist, bool trackObjectsYaw = false);
 
   /**
+  Sets the spatial offset from the target. Only applies for orbit style.
+  */
+  void setRollPitchYawPos(Ogre::Real w, Ogre::Real x, Ogre::Real y, Ogre::Real z, Ogre::Vector3 pos, bool trackObjectsYaw = false);
+
+  /**
   Sets the camera's top speed. Only applies for free-look style.
   */
   void setTopSpeed(Ogre::Real topSpeed)
@@ -149,7 +154,7 @@ class CameraMan : public InputListener
   bool mGoingUp;
   bool mGoingDown;
   bool mFastMove;
-  Ogre::Radian yaw_, pitch_;
+  Ogre::Radian roll_, yaw_, pitch_;
   float dist_;
   Ogre::Vector3 mOffset;
 };

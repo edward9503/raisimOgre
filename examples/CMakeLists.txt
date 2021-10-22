@@ -21,6 +21,7 @@ create_executable(laikago src/robots/laikago.cpp)
 create_executable(kinova src/robots/kinova.cpp)
 create_executable(atlas src/robots/atlas.cpp)
 create_executable(anymalOnHeightMap src/robots/heightMap.cpp)
+create_executable(tele_ANYmal src/robots/tele_ANYmal.cpp)
 create_executable(chain src/robots/chain.cpp)
 create_executable(aliengo src/robots/aliengo.cpp)
 create_executable(shunk src/robots/shunk.cpp)
@@ -48,6 +49,7 @@ set(EXAMPLE_BINS
   anymal
   laikago
   anymalOnHeightMap
+  tele_ANYmal
   primitives
   kinova
   atlas
