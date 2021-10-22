@@ -64,7 +64,7 @@ class CameraMan : public InputListener
   /**
   Sets the spatial offset from the target. Only applies for orbit style.
   */
-  void setRollPitchYawPos(Ogre::Real w, Ogre::Real x, Ogre::Real y, Ogre::Real z, Ogre::Vector3 pos, bool trackObjectsYaw = false);
+  void setQuatPos(Ogre::Real w, Ogre::Real x, Ogre::Real y, Ogre::Real z, Ogre::Vector3 pos, bool trackObjectsYaw = false);
 
   /**
   Sets the camera's top speed. Only applies for free-look style.

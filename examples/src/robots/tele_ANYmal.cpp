@@ -156,7 +156,7 @@ int main(int argc, char **argv) {
                    0, 1, 0;
     Eigen::Quaternionf camera_quatEigen(camera_oriEigen*preR_camera);
     camera_quatEigen.normalize();
-    vis->getCameraMan()->setRollPitchYawPos(Ogre::Real(camera_quatEigen.w()), Ogre::Real(camera_quatEigen.x()), 
+    vis->getCameraMan()->setQuatPos(Ogre::Real(camera_quatEigen.w()), Ogre::Real(camera_quatEigen.x()), 
                                             Ogre::Real(camera_quatEigen.y()), Ogre::Real(camera_quatEigen.z()), 
                                             Ogre::Vector3(camera_position(0), camera_position(1), camera_position(2)));
     std::cout<<"w: "<<camera_quatEigen.w()<<"x: "<<camera_quatEigen.x()<<"y: "<<camera_quatEigen.y()<<"z: "<<camera_quatEigen.z() << "\n";
@@ -178,7 +178,7 @@ int main(int argc, char **argv) {
 
   vis->select(anymal_visual.back()->at(0));
   // vis->getCameraMan()->setYawPitchDist(Ogre::Radian(M_PI_2), -Ogre::Radian(0), 10);  
-  vis->getCameraMan()->setRollPitchYawPos(Ogre::Real(0.5), Ogre::Real(0.5), Ogre::Real(-0.5), Ogre::Real(-0.5), 
+  vis->getCameraMan()->setQuatPos(Ogre::Real(0.5), Ogre::Real(0.5), Ogre::Real(-0.5), Ogre::Real(-0.5), 
                                           Ogre::Vector3(camera_position(0), camera_position(1), camera_position(2)));
   anymal.back()->setGeneralizedForce(Eigen::VectorXd::Zero(anymal.back()->getDOF()));
   anymal.back()->setControlMode(raisim::ControlMode::PD_PLUS_FEEDFORWARD_TORQUE);
