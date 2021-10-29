@@ -42,8 +42,8 @@ void setupCallback() {
   vis->setContactVisObjectSize(0.04, 0.3);
 
   /// load  textures
-  vis->addResourceDirectory(vis->getResourceDir() + "/material/gravel");
-  vis->loadMaterialFile("gravel.material");
+  vis->addResourceDirectory(vis->getResourceDir() + "/material/checkerboard");
+  vis->loadMaterialFile("checkerboard.material");
 
   /// shadow setting
   vis->getSceneManager()->setShadowTechnique(Ogre::SHADOWTYPE_TEXTURE_ADDITIVE);
@@ -78,59 +78,67 @@ int main(int argc, char **argv) {
   /// starts visualizer thread
   vis->initApp();
 
+  /// create raisim objects
+  auto ground = world.addGround();
+
   std::vector<raisim::ArticulatedSystem*> anymal;
   std::vector<std::vector<raisim::GraphicObject>*> anymal_visual;
+
+  /// create visualizer objects
+  vis->createGraphicalObject(ground, 20, "floor", "checkerboard_green");  
 
   /// create raisim objects
   auto sphere1 = world.addSphere(0.1, 1);
   auto sphere2 = world.addSphere(0.1, 1);
-  anymal.push_back(world.addArticulatedSystem(raisim::loadResource("anymalC/anymal.urdf")));
+  anymal.push_back(world.addArticulatedSystem(raisim::loadResource("anymalC_kinova/urdf/anymal_kinova.urdf")));
   sphere1->setPosition(0, 0, 5);
   sphere2->setPosition(0.5, 0, 3);
 
   /// create heightmap
-  raisim::TerrainProperties terrainProperties;
-  terrainProperties.frequency = 0.2;
-  terrainProperties.zScale = 3.0;
-  terrainProperties.xSize = 20.0;
-  terrainProperties.ySize = 20.0;
-  terrainProperties.xSamples = 50;
-  terrainProperties.ySamples = 50;
-  terrainProperties.fractalOctaves = 3;
-  terrainProperties.fractalLacunarity = 2.0;
-  terrainProperties.fractalGain = 0.25;
+  // raisim::TerrainProperties terrainProperties;
+  // terrainProperties.frequency = 0.2;
+  // terrainProperties.zScale = 3.0;
+  // terrainProperties.xSize = 20.0;
+  // terrainProperties.ySize = 20.0;
+  // terrainProperties.xSamples = 50;
+  // terrainProperties.ySamples = 50;
+  // terrainProperties.fractalOctaves = 3;
+  // terrainProperties.fractalLacunarity = 2.0;
+  // terrainProperties.fractalGain = 0.25;
 
   /// comment one of the following two heightmap methods
 
   /// using terrain properties
-  auto hm = world.addHeightMap(0.0, 0.0, terrainProperties);
+  // auto hm = world.addHeightMap(0.0, 0.0, terrainProperties);
 
   /// using raisim text file
 //  auto hm = world.addHeightMap(raisim::loadResource("heightMap/heightMapExample.txt"), 0, 0);
 
   /// create visualizer objects
-  vis->createGraphicalObject(hm, "terrain", "default");
+  // vis->createGraphicalObject(hm, "terrain", "default");
   vis->createGraphicalObject(sphere1, "sphere1", "gravel");
   vis->createGraphicalObject(sphere2, "sphere2", "default");
 
   /// ANYmal joint PD controller
-  Eigen::VectorXd jointNominalConfig(19), jointVelocityTarget(18);
-  Eigen::VectorXd jointState(18), jointVel(18), jointForce(18), jointPgain(18), jointDgain(18);
+  Eigen::VectorXd jointNominalConfig(31), jointVelocityTarget(30);
+  Eigen::VectorXd jointState(30), jointVel(30), jointForce(30), jointPgain(30), jointDgain(30);
   jointPgain.setZero();
   jointDgain.setZero();
   jointVelocityTarget.setZero();
-  jointPgain.tail(12).setConstant(200.0);
-  jointDgain.tail(12).setConstant(10.0);
+  jointPgain.tail(24).setConstant(200.0);
+  jointDgain.tail(24).setConstant(10.0);
 
-  jointNominalConfig << 0, 0, 0, 0, 0, 0, 0, 0.03, 0.4, -0.8, -0.03, 0.4, -0.8, 0.03, -0.4, 0.8, -0.03, -0.4, 0.8;
-  jointVel << 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0;
+  jointNominalConfig << 0, 0, 0, 0, 0, 0, 0, 0.03, 0.4, -0.8, -0.03, 0.4, -0.8, 0.03, -0.4, 0.8, -0.03, -0.4, 0.8, 
+                        0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0;
+  jointVel.setZero();
 
-  anymal_visual.push_back(vis->createGraphicalObject(anymal.back(), "ANYmal"));  
+  anymal_visual.push_back(vis->createGraphicalObject(anymal.back(), "ANYmal_kinova"));  
 
   anymal.back()->setGeneralizedCoordinate({0, 0, 3.54, 1.0, 0.0, 0.0, 0.0, 0.03, 0.4,
-                                    -0.8, -0.03, 0.4, -0.8, 0.03, -0.4, 0.8, -0.03, -0.4, 0.8});
+                                    -0.8, -0.03, 0.4, -0.8, 0.03, -0.4, 0.8, -0.03, -0.4, 0.8,
+                                    0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0});
   Eigen::Vector4d quat; quat <<1., 0., 0., 0.;
-  hm->setPosition(0.1, 0.2, -0.3);
+  // hm->setPosition(0.1, 0.2, -0.3);
 
   /// lambda function for the controller
   double time=0.;
@@ -138,7 +146,7 @@ int main(int argc, char **argv) {
                      &time,
                      &world,
                      anymal]() {
-    // time += world.getTimeStep();
+    time += world.getTimeStep();
     raisim::Vec<3> camera_position;
     raisim::Mat<3, 3> camera_orientation;
     Eigen::Matrix3f camera_oriEigen;
@@ -156,9 +164,9 @@ int main(int argc, char **argv) {
                    0, 1, 0;
     Eigen::Quaternionf camera_quatEigen(camera_oriEigen*preR_camera);
     camera_quatEigen.normalize();
-    vis->getCameraMan()->setQuatPos(Ogre::Real(camera_quatEigen.w()), Ogre::Real(camera_quatEigen.x()), 
-                                            Ogre::Real(camera_quatEigen.y()), Ogre::Real(camera_quatEigen.z()), 
-                                            Ogre::Vector3(camera_position(0), camera_position(1), camera_position(2)));
+    // vis->getCameraMan()->setQuatPos(Ogre::Real(camera_quatEigen.w()), Ogre::Real(camera_quatEigen.x()), 
+    //                                         Ogre::Real(camera_quatEigen.y()), Ogre::Real(camera_quatEigen.z()), 
+    //                                         Ogre::Vector3(camera_position(0), camera_position(1), camera_position(2)));
     std::cout<<"w: "<<camera_quatEigen.w()<<"x: "<<camera_quatEigen.x()<<"y: "<<camera_quatEigen.y()<<"z: "<<camera_quatEigen.z() << "\n";
     // Camera->setPosition(1,1,1);
     // mCamera->setOrientation(Ogre::Quaternion{1.,0.,0.,0.});
@@ -170,6 +178,13 @@ int main(int argc, char **argv) {
     RSINFO(camera_oriEigen);
     RSINFO(camera_orientation);
     // RSINFO(anymal.back()-> getFrameIdxByName("face_front_to_depth_camera_front_camera"));
+
+    Eigen::VectorXd jointNominalConfig(31), jointVelocityTarget(30);
+    jointVelocityTarget.setZero();
+    jointNominalConfig << 0, 0, 0, 0, 0, 0, 0, 0.03, 0.4, -0.8, -0.03, 0.4, -0.8, 0.03, -0.4, 0.8, -0.03, -0.4, 0.8, 
+                          1.57 * sin(1.8*M_PI*time/10), 0, 1.57 * sin(1.8*M_PI*time/10), 0, 1.57 * sin(1.8*M_PI*time/10), 0, 3 * sin(1.8*M_PI*time), 0, 0, 3 * sin(1.8*M_PI*time), 0, 0;  
+                          // 3 * sin(1.8*M_PI*time)  
+    anymal.back()->setPdTarget(jointNominalConfig, jointVelocityTarget);
   };
 
   vis->setControlCallback(controller); 
@@ -186,7 +201,9 @@ int main(int argc, char **argv) {
   anymal.back()->setPdTarget(jointNominalConfig, jointVelocityTarget);
   
   RSINFO(camera_position);
-  // RSINFO(anymal.back()->getDOF());
+  RSINFO(anymal.back()->getDOF());
+  anymal.back()->printOutMovableJointNamesInOrder();
+  
 
   /// run the app
   vis->run();
