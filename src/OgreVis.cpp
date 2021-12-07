@@ -14,9 +14,19 @@
 // RaiSimOgre
 #include "raisim/OgreVis.hpp"
 
+template<typename T, typename... Args>
+std::unique_ptr< T > make_unique(Args&&... args) {
+    return std::unique_ptr< T >(new T(std::forward<Args>(args)...));
+}
+
 namespace raisim {
 
 std::unique_ptr<raisim::OgreVis> raisim::OgreVis::singletonPtr(nullptr);
+
+template<typename T, typename... Args>
+std::unique_ptr< T > make_unique(Args&&... args) {
+    return std::unique_ptr< T >(new T(std::forward<Args>(args)...));
+}
 
 OgreVis::~OgreVis() {
   if (videoThread_ && videoThread_->joinable()) videoThread_->join();
@@ -223,7 +233,7 @@ void OgreVis::videoThread() {
 
   Ogre::PixelFormat pf = getRenderWindow()->suggestPixelFormat();
   videoBuffer_.reset(OGRE_ALLOC_T(Ogre::uchar, w * h * Ogre::PixelUtil::getNumElemBytes(pf), MEMCATEGORY_RENDERSYS));
-  videoPixelBox_ = std::make_unique<Ogre::PixelBox>(w, h, 1, pf, videoBuffer_.get());
+  videoPixelBox_ = make_unique<Ogre::PixelBox>(w, h, 1, pf, videoBuffer_.get());
   videoInitMutex_.unlock();
 
   while (true) {
@@ -265,7 +275,7 @@ bool OgreVis::frameStarted(const Ogre::FrameEvent &evt) {
     isVideoRecording_ = true;
     initiateVideoRecording_ = false;
     if (videoThread_ && videoThread_->joinable()) videoThread_->join();
-    videoThread_ = std::make_unique<std::thread>(&OgreVis::videoThread, this);
+    videoThread_ = make_unique<std::thread>(&OgreVis::videoThread, this);
   }
 
   return true;
@@ -381,7 +391,7 @@ void OgreVis::setup() {
   Ogre::RTShader::ShaderGenerator *shadergen = Ogre::RTShader::ShaderGenerator::getSingletonPtr();
   shadergen->addSceneManager(scnMgr_);
   raySceneQuery_ = scnMgr_->createRayQuery(Ogre::Ray());
-  
+
   // Configure scene default lighting
   lights_.clear();
   lightNodes_.clear();
@@ -410,7 +420,7 @@ void OgreVis::setup() {
   camNode_->attachObject(mainCamera_);
   camNode_->setPosition(10, 10, 10);
   camNode_->setOrientation(1, 0, 0, 0);
-  cameraMan_ = std::make_unique<raisim::CameraMan>(camNode_);   // create a default camera controller
+  cameraMan_ = make_unique<raisim::CameraMan>(camNode_);   // create a default camera controller
   cameraMan_->setStyle(CS_FREELOOK);
 
   // and tell it to render into the main window
@@ -757,10 +767,10 @@ std::vector<GraphicObject> *OgreVis::createGraphicalObject(raisim::Compound *com
     auto visname = name + "_ch_" + std::to_string(i);
     raisim::Vec<3> dim;
     std::string meshName;
-    raisim::Vec<3> capOffsetRaw, capOffset;    
+    raisim::Vec<3> capOffsetRaw, capOffset;
     switch(ch[i].objectType) {
       case raisim::ObjectType::BOX :
-        meshName = "cubeMesh";        
+        meshName = "cubeMesh";
         dim = {ch[i].objectParam[0], ch[i].objectParam[1], ch[i].objectParam[2]};
         break;
       case raisim::ObjectType::SPHERE :
@@ -843,7 +853,7 @@ void OgreVis::registerRaisimGraphicalObjects(raisim::VisObject &vo,
     auto visname = name + "_" + as->getBodyNames()[vo.localIdx] + "_";
     raisim::Vec<3> dim;
     std::string meshName;
-    raisim::Vec<3> capOffsetRaw, capOffset;    
+    raisim::Vec<3> capOffsetRaw, capOffset;
 
     switch (vo.shape) {
       case raisim::Shape::Box :
@@ -1226,7 +1236,7 @@ void OgreVis::renderOneFrame() {
     auto nContact = contactProblem->size();
 
     sync();
-    
+
     /// initially set everything to false
     for (auto &con : contactPoints_)
       con.graphics->setVisible(false);
@@ -1293,7 +1303,7 @@ void OgreVis::renderOneFrame() {
       }
     }
   }
-  
+
   for (auto &vob: visObject_) {
     vob.second.graphics->setVisible(vob.second.group & mask_);
     updateVisualizationObject(vob.second);
@@ -1349,7 +1359,7 @@ void OgreVis::closeApp() {
   imGuiSetupCallback_ = nullptr;
   keyboardCallback_ = nullptr;
   setUpCallback_ = nullptr;
-  controlCallback_ = nullptr;  
+  controlCallback_ = nullptr;
   if(singletonPtr) singletonPtr.reset(nullptr);
 
 }
