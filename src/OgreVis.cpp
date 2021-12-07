@@ -14,9 +14,19 @@
 // RaiSimOgre
 #include "raisim/OgreVis.hpp"
 
+template<typename T, typename... Args>
+std::unique_ptr< T > make_unique(Args&&... args) {
+    return std::unique_ptr< T >(new T(std::forward<Args>(args)...));
+}
+
 namespace raisim {
 
 std::unique_ptr<raisim::OgreVis> raisim::OgreVis::singletonPtr(nullptr);
+
+template<typename T, typename... Args>
+std::unique_ptr< T > make_unique(Args&&... args) {
+    return std::unique_ptr< T >(new T(std::forward<Args>(args)...));
+}
 
 OgreVis::~OgreVis() {
   if (videoThread_ && videoThread_->joinable()) videoThread_->join();
@@ -223,7 +233,7 @@ void OgreVis::videoThread() {
 
   Ogre::PixelFormat pf = getRenderWindow()->suggestPixelFormat();
   videoBuffer_.reset(OGRE_ALLOC_T(Ogre::uchar, w * h * Ogre::PixelUtil::getNumElemBytes(pf), MEMCATEGORY_RENDERSYS));
-  videoPixelBox_ = std::make_unique<Ogre::PixelBox>(w, h, 1, pf, videoBuffer_.get());
+  videoPixelBox_ = make_unique<Ogre::PixelBox>(w, h, 1, pf, videoBuffer_.get());
   videoInitMutex_.unlock();
 
   while (true) {
@@ -265,7 +275,7 @@ bool OgreVis::frameStarted(const Ogre::FrameEvent &evt) {
     isVideoRecording_ = true;
     initiateVideoRecording_ = false;
     if (videoThread_ && videoThread_->joinable()) videoThread_->join();
-    videoThread_ = std::make_unique<std::thread>(&OgreVis::videoThread, this);
+    videoThread_ = make_unique<std::thread>(&OgreVis::videoThread, this);
   }
 
   return true;
@@ -410,7 +420,7 @@ void OgreVis::setup() {
   camNode_->attachObject(mainCamera_);
   camNode_->setPosition(10, 10, 10);
   camNode_->setOrientation(1, 0, 0, 0);
-  cameraMan_ = std::make_unique<raisim::CameraMan>(camNode_);   // create a default camera controller
+  cameraMan_ = make_unique<raisim::CameraMan>(camNode_);   // create a default camera controller
   cameraMan_->setStyle(CS_FREELOOK);
 
   // and tell it to render into the main window

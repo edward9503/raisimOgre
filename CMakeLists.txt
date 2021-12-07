@@ -1,4 +1,5 @@
 cmake_minimum_required(VERSION 3.10)
+# SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++14")
 project(raisimOgre VERSION 0.7.0)
 
 include(CMakePackageConfigHelpers)
@@ -148,6 +149,8 @@ install(
   DESTINATION
     ${CMAKE_INSTALL_INCLUDEDIR}
 )
+message(${CMAKE_CURRENT_SOURCE_DIR})
+message(${CMAKE_INSTALL_INCLUDEDIR})
 
 ####################################
 ############# examples #############

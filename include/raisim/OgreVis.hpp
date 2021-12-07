@@ -37,6 +37,11 @@ class OgreVis:
 {
 public:
 
+  template<typename T, typename... Args>
+  std::unique_ptr< T > make_unique(Args&&... args) {
+      return std::unique_ptr< T >(new T(std::forward<Args>(args)...));
+  }
+
   /** Aliases **/
   using ImGuiRenderCallback = std::function<void()>;
   using ImGuiSetupCallback = std::function<void()>;
@@ -352,7 +357,7 @@ private:
     RSINFO("Loading OGRE Configurations from: " + std::string(OGREVIS_MAKE_STR(OGRE_CONFIG_DIR)))
     resourceDir_ = std::string(OGREVIS_MAKE_STR(RAISIM_OGRE_RESOURCE_DIR));
     mFSLayer->setHomePath(std::string(OGREVIS_MAKE_STR(OGRE_CONFIG_DIR)));
-    lm_ = std::make_unique<Ogre::LogManager>();
+    lm_ = make_unique<Ogre::LogManager>();
     lm_->createLog("", true, false, false); //TODO: redirect to our own logger.
     start = std::chrono::system_clock::now();
   }

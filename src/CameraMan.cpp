@@ -73,8 +73,8 @@ void CameraMan::setQuatPos(Ogre::Real w, Ogre::Real x, Ogre::Real y, Ogre::Real 
   mCamera->setOrientation(Ogre::Quaternion{w,x,y,z});
   if(trackObjectsYaw)
     mCamera->yaw(mTarget->_getDerivedOrientation().getRoll());
-  mCamera->yaw(-yaw_);
-  mCamera->pitch(-pitch_);
+  // mCamera->yaw(-yaw_);
+  // mCamera->pitch(-pitch_);
   mCamera->translate(Ogre::Vector3(0, 0, 0), Ogre::Node::TS_LOCAL);
 }
 

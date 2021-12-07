@@ -1,4 +1,5 @@
 cmake_minimum_required(VERSION 3.5)
+# SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++14")
 project(raisimOgre_examples VERSION 0.2.0)
 
 find_package(raisimOgre CONFIG REQUIRED)
