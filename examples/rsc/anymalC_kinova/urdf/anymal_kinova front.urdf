@@ -1604,7 +1604,8 @@
         <child link="base_link"/>
     </joint> -->
     <joint name="arm_to_anymal" type="fixed">
-        <origin rpy="0 0 0" xyz="0.35801 0 0.073"/>
+        <!-- <origin rpy="0 0 0" xyz="0.35801 0 0.073"/> -->
+        <origin rpy="0 0 0" xyz="0.49801 0 0.063"/>
         <parent link="base"/>   
         <child link="base_link"/>
     </joint>
