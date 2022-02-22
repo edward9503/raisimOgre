@@ -241,7 +241,8 @@
     <joint name="face_front_to_wide_angle_camera_front_camera" type="fixed">
         <parent link="face_front"/>
         <child link="wide_angle_camera_front_camera"/>
-        <origin rpy="0 0 0" xyz="0.09850 0.0 0.01497"/>
+        <!-- <origin rpy="0 0 0" xyz="0.09850 0.0 0.01497"/> -->
+        <origin rpy="0 0 0" xyz="0.0 0.0 0.01497"/>
     </joint>
     <!-- Camera link -->
     <link name="wide_angle_camera_front_camera">
@@ -1819,7 +1820,7 @@
         <limit effort="9" velocity="1.2218"/>
     </joint>
     <link name="end_effector_link"/>
-    <joint name="end_effector" type="fixed">
+    <joint name="bracelet_link_to_end_effector" type="fixed">
         <origin rpy="3.14159265358979 1.09937075168372E-32 3.14159265358979" xyz="0 0 -0.0615250000000001"/>
         <parent link="bracelet_link"/>
         <child link="end_effector_link"/>
@@ -1870,14 +1871,14 @@
     </joint> -->
     <link name="end_effector">
         <inertial>
-        <origin rpy="1.57 0 0" xyz="0 0 0"/>
+        <origin rpy="1.57 0.0 -0.349" xyz="0 0 0"/>
         <!-- <mass value="0.22652"/> -->
         <!-- <mass value="0.02652"/> -->
         <mass value="1E-06"/>
         <inertia ixx="0.00020005" ixy="-4.2442E-10" ixz="-2.9069E-10" iyy="0.00017832" iyz="-3.4402E-08" izz="0.00013478"/>
         </inertial>
         <visual>
-        <origin rpy="1.57 0 0" xyz="0 0 0"/>
+        <origin rpy="1.57 0.0 -0.349" xyz="0 0 0"/>
         <geometry>
             <mesh filename="../customize_materials/donut_tip.obj" scale="0.0005 0.0005 0.0005"/>
         </geometry>
@@ -1886,7 +1887,7 @@
         </material>
         </visual>
         <collision>
-        <origin rpy="1.57 0 0" xyz="0 0 0"/>
+        <origin rpy="1.57 0.0 -0.349" xyz="0 0 0"/>
         <geometry>
             <mesh filename="../customize_materials/donut_tip.obj" scale="0.0005 0.0005 0.0005"/>
         </geometry>
