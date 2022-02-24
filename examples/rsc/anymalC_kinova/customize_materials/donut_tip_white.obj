@@ -1,6 +1,6 @@
 # Blender v3.0.1 OBJ File: ''
 # www.blender.org
-mtllib donut_tip.mtl
+mtllib donut_tip_white.mtl
 o donut_tip
 v -0.001175 79.998787 -0.000071
 v 5.928268 80.067223 -3.380087
