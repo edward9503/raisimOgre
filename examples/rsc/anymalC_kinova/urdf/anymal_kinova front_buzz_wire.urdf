@@ -1837,10 +1837,12 @@
         <axis xyz="0 0 0"/>
     </joint>
     <!-- This joint was added by Kinova -->
-    <joint name="gripper_base_joint" type="fixed">
+    <joint name="gripper_base_joint" type="revolute">
         <parent link="end_effector_link"/>
         <child link="end_effector"/>
         <origin rpy="0.0 0.0 0" xyz="0.0 0.0 0.05"/>
+        <axis xyz="0 0 1"/>
+        <limit effort="0" lower="0" upper="0" velocity="0"/>
     </joint>
     <!-- <link name="tip_stick">
         <inertial>
